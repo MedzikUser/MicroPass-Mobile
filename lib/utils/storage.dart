@@ -5,8 +5,8 @@ const storage = FlutterSecureStorage();
 final memoryCache = MemoryCache.instance;
 
 class Storage {
-  /// Insert variable into a storage.
-  static insert(key, String value) async {
+  /// Write variable into a storage.
+  static write(key, String value) async {
     // save the key to a suitable storage
     if (key.isInMemory) {
       // write the value to the in-memory storage
@@ -17,7 +17,7 @@ class Storage {
     }
   }
 
-  /// Get variable value from the storage.
+  /// Read variable value from the storage.
   static Future<String?> read(StorageKey key) async {
     // read the key to a suitable storage
     if (key.isInMemory) {
@@ -41,13 +41,13 @@ class Storage {
     }
   }
 
-  /// Delete all keys from memory
-  static dropMemory() async {
+  /// Delete all keys from memory.
+  static dropMemory() {
     memoryCache.invalidate();
   }
 
   /// Delete all keys.
-  static deleteAll() async {
+  static dropAll() async {
     // delete all keys from memory
     memoryCache.invalidate();
 

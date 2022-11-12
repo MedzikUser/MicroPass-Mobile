@@ -37,7 +37,7 @@ class _VaultViewState extends State<VaultView> {
     final unixNow =
         (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
 
-    await Storage.insert(StorageKey.ciphersLastSync, unixNow);
+    await Storage.write(StorageKey.ciphersLastSync, unixNow);
 
     const lastSync = null;
 
@@ -93,7 +93,7 @@ class _VaultViewState extends State<VaultView> {
   }
 
   Future<void> logout() async {
-    await Storage.deleteAll();
+    await Storage.dropAll();
 
     if (!mounted) return;
     Navigator.pushReplacement(

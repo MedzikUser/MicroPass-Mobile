@@ -39,12 +39,12 @@ class _UnlockViewState extends State<UnlockView> {
 
         // refresh access token
         final accessToken = await IdentityApi().refreshToken(refreshToken!);
-        await Storage.insert(StorageKey.accessToken, accessToken.accessToken!);
+        await Storage.write(StorageKey.accessToken, accessToken.accessToken!);
 
         final encryptionKey = await UserApi(accessToken.accessToken!)
             .encryptionKey(email!, passwordController.text);
 
-        await Storage.insert(StorageKey.encryptionKey, encryptionKey);
+        await Storage.write(StorageKey.encryptionKey, encryptionKey);
 
         if (!mounted) return;
         Navigator.pushReplacement(
@@ -74,7 +74,7 @@ class _UnlockViewState extends State<UnlockView> {
   }
 
   Future<void> logout() async {
-    await Storage.deleteAll();
+    await Storage.dropAll();
 
     if (!mounted) return;
     Navigator.pushReplacement(

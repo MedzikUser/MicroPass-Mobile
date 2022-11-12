@@ -46,14 +46,14 @@ class _LoginViewState extends State<LoginView> {
         final accessToken = response.accessToken!;
         final refreshToken = response.refreshToken!;
 
-        await Storage.insert(StorageKey.email, email);
-        await Storage.insert(StorageKey.accessToken, accessToken);
-        await Storage.insert(StorageKey.refreshToken, refreshToken);
+        await Storage.write(StorageKey.email, email);
+        await Storage.write(StorageKey.accessToken, accessToken);
+        await Storage.write(StorageKey.refreshToken, refreshToken);
 
         final encryptionKey =
             await UserApi(accessToken).encryptionKey(masterPassword, email);
 
-        await Storage.insert(StorageKey.encryptionKey, encryptionKey);
+        await Storage.write(StorageKey.encryptionKey, encryptionKey);
 
         if (!mounted) return;
 
