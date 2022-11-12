@@ -9,9 +9,9 @@ import 'package:micropass/utils/storage.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final accessToken = await Storage.read(StorageKey.accessToken);
+  final refreshToken = await Storage.read(StorageKey.refreshToken);
 
-  runApp(MyApp(loggedIn: accessToken != null));
+  runApp(MyApp(loggedIn: refreshToken != null));
 }
 
 class MyApp extends StatelessWidget {
