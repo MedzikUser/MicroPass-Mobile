@@ -304,9 +304,11 @@ packages:
   micropass_api:
     dependency: "direct main"
     description:
-      path: "../api-dart"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: "881323c8c1dbb7dc660ecdc7dcaa8419169da843"
+      url: "https://github.com/MedzikUser/dart-micropass-api.git"
+    source: git
     version: "0.1.0"
   path:
     dependency: transitive

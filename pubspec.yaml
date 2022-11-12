@@ -15,9 +15,9 @@ dependencies:
     sdk: flutter
 
   micropass_api:
-    path: ../api-dart
-    # git:
-    #   url: https://github.com/MedzikUser/dart-micropass-api.git
+    # path: ../api-dart
+    git:
+      url: https://github.com/MedzikUser/dart-micropass-api.git
 
   flutter_i18n: ^0.32.4
 
