@@ -71,7 +71,7 @@ class StorageKey {
   /// Save key to the in-memory storage.
   static const _memory = true;
 
-  static const accessToken = StorageKey('accessToken', _storage);
+  static const accessToken = StorageKey('accessToken', _memory);
   static const refreshToken = StorageKey('refresh', _storage);
   static const email = StorageKey('email', _storage);
 
