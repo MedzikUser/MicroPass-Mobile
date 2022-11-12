@@ -1,0 +1,72 @@
+{
+  "signin": {
+    "title": "Log in",
+    "button": "Log in",
+    "question": "Don't have an account?",
+    "question_link": "Sign up"
+  },
+  "register": {
+    "title": "Sign up",
+    "button": "Sign up",
+    "question": "Already have an account?",
+    "question_link": "Log in"
+  },
+  "form": {
+    "hint": {
+      "email": "Email",
+      "master_password": "Master Password",
+      "master_password_retype": "Re-type Master Password",
+      "master_password_hint": "Master Password Hint (optional)",
+      "name": "Name",
+      "username": "Username",
+      "password": "Password"
+    },
+    "invalid": {
+      "email": "Invalid email address",
+      "empty": "Empty field",
+      "password_do_not_match": "Passwords don't match"
+    }
+  },
+  "toast": {
+    "retry": "Retry",
+    "registered_successfully": "You have successfully registered. Verify your email address to log in.",
+    "copied_to_clipboard": "Copied to clipboard!"
+  },
+  "vault": {
+    "section": {
+      "item_informations": "Item informations",
+      "other": "Other"
+    },
+    "item": {
+      "name": "Name",
+      "username": "Username",
+      "password": "Password"
+    },
+    "add_item": {
+      "app_bar_text": "Add Item",
+      "button": "Add Item"
+    },
+    "update_item": {
+      "app_bar_text": "Update Item",
+      "button": "Update Item"
+    },
+    "dialog": {
+      "delete": "Delete",
+      "close": "Close"
+    },
+    "unlock_page": {
+      "text": "Your Vault is locked. Type your master password to continue.",
+      "button": "Unlock",
+      "invalid_password": "Invalid Password"
+    },
+    "app_bar": {
+      "tooltip": {
+        "lock": "Lock vault",
+        "logout": "Logout",
+        "add_item": "Add Item",
+        "edit_item": "Edit Item"
+      },
+      "title": "Vault"
+    }
+  }
+}

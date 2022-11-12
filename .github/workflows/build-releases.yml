@@ -1,0 +1,66 @@
+name: Release build
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  build-android:
+    name: Build Android application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Java 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Download dependencies
+        run: flutter pub get
+
+      - name: Build apk
+        run: flutter build apk
+
+      - name: Build appbundle
+        run: flutter build appbundle
+
+      - name: Upload artifact (apk)
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: ./build/app/outputs/apk/release/*.apk
+
+      - name: Upload artifact (appbundle)
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-appbundle
+          path: ./build/app/outputs/bundle/release/*.aab
+
+  build-ios:
+    name: Build iOS application
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+
+      - name: Download dependencies
+        run: flutter pub get
+
+      - name: Build
+        run: flutter build ios --release --no-codesign

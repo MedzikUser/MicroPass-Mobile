@@ -1,0 +1,52 @@
+name: micropass
+description: The mobile application for MicroPass.
+
+publish_to: 'none'
+
+version: 0.0.0+1
+
+environment:
+  sdk: '>=2.18.2 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  micropass_api:
+    path: ../api-dart
+    # git:
+    #   url: https://github.com/MedzikUser/dart-micropass-api.git
+
+  flutter_i18n: ^0.32.4
+
+  dynamic_themes: ^1.1.0
+  google_fonts: ^3.0.1
+  email_validator: ^2.1.17
+
+  # Storage
+  flutter_secure_storage: ^6.0.0
+  memory_cache: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+
+  flutter_launcher_icons: ^0.10.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/i18n/
+
+flutter_icons:
+  image_path: "assets/icon/icon-bg.png"
+  adaptive_icon_foreground: "assets/icon/icon.png"
+  adaptive_icon_background: "#FFFFFF"
+  android: true
+  ios: true
+  remove_alpha_ios: true
