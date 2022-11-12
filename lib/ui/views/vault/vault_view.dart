@@ -43,20 +43,20 @@ class _VaultViewState extends State<VaultView> {
 
     ciphers = [];
 
-    final ciphersJsonText = await Storage.read(StorageKey.cachedCiphers);
-    if (ciphersJsonText != null) {
-      final ciphersJson = jsonDecode(ciphersJsonText);
+    // final ciphersJsonText = await Storage.read(StorageKey.cachedCiphers);
+    // if (ciphersJsonText != null) {
+    //   final ciphersJson = jsonDecode(ciphersJsonText);
 
-      for (var cipher in ciphersJson["ciphers"]) {
-        ciphers.add(Cipher.fromMap(cipher));
-      }
+    //   for (var cipher in ciphersJson["ciphers"]) {
+    //     ciphers.add(Cipher.fromMap(cipher));
+    //   }
 
-      if (ciphers.isEmpty) {
-        setState(() {
-          loading = false;
-        });
-      }
-    }
+    //   if (ciphers.isEmpty) {
+    //     setState(() {
+    //       loading = false;
+    //     });
+    //   }
+    // }
 
     final accessToken = await Storage.read(StorageKey.accessToken);
     final encryptionKey = await Storage.read(StorageKey.encryptionKey);
@@ -69,6 +69,8 @@ class _VaultViewState extends State<VaultView> {
 
       ciphers.add(cipher);
     }
+
+    // await Storage.write(StorageKey.cachedCipherIds, jsonEncode(ciphersList));
 
     widgets = [];
     for (var cipher in ciphers) {
@@ -116,7 +118,7 @@ class _VaultViewState extends State<VaultView> {
         actions: [
           IconButton(
             onPressed: lock,
-            icon: const Icon(Icons.lock),
+            icon: const Icon(Icons.lock_outline),
             tooltip:
                 FlutterI18n.translate(context, 'vault.app_bar.tooltip.lock'),
           ),

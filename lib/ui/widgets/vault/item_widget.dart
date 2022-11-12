@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:micropass/ui/views/vault/edit_item_view.dart';
 import 'package:micropass/ui/views/vault/item_view.dart';
 import 'package:micropass/utils/storage.dart';
 import 'package:micropass_api/micropass_api.dart';
@@ -36,34 +37,50 @@ Future<void> _dialogBuilder(BuildContext context, Cipher cipher) async {
   final accessToken = await Storage.read(StorageKey.accessToken);
   final client = CiphersApi(accessToken!, '');
 
-  return showDialog<void>(
+  return showModalBottomSheet<void>(
     context: context,
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(cipher.name),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+      return SizedBox(
+        height: 170,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextButton(
-              onPressed: () {
+            ListTile(
+              leading: const Icon(Icons.visibility),
+              title: I18nText('vault.options_modal.view'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ItemView(cipher: cipher),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: I18nText('vault.options_modal.edit'),
+              onTap: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditItemView(cipher: cipher),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete),
+              title: I18nText('vault.options_modal.delete'),
+              onTap: () {
                 client.delete(cipher.id!);
                 Navigator.of(context).pop();
               },
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
-              ),
-              child: I18nText('vault.dialog.delete'),
-            )
+            ),
           ],
         ),
-        actions: <Widget>[
-          TextButton(
-            child: I18nText('vault.dialog.close'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
       );
     },
   );

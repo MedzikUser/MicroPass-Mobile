@@ -50,9 +50,10 @@
       "app_bar_text": "Update Item",
       "button": "Update Item"
     },
-    "dialog": {
-      "delete": "Delete",
-      "close": "Close"
+    "options_modal": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "unlock_page": {
       "text": "Your Vault is locked. Type your master password to continue.",

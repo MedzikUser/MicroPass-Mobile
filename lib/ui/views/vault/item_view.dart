@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:micropass/ui/views/vault/edit_item_view.dart';
-import 'package:micropass/utils/custom_colors.dart';
+import 'package:micropass/utils/custom_styles.dart';
 import 'package:micropass/utils/toast.dart';
 import 'package:micropass_api/micropass_api.dart';
 
@@ -42,7 +42,7 @@ class _ItemViewState extends State<ItemView> {
           children: [
             I18nText(
               'vault.section.item_informations',
-              child: Text('', style: CustomColors.sectionTextStyle(context)),
+              child: Text('', style: CustomStyles.sectionTextStyle(context)),
             ),
             ItemWidget(
               title: FlutterI18n.translate(context, 'vault.item.name'),
@@ -58,9 +58,10 @@ class _ItemViewState extends State<ItemView> {
               subtitle: widget.cipher.password,
               secret: true,
             ),
+            const SizedBox(height: 10),
             I18nText(
               'vault.section.other',
-              child: Text('', style: CustomColors.sectionTextStyle(context)),
+              child: Text('', style: CustomStyles.sectionTextStyle(context)),
             ),
             const SizedBox(height: 10),
             RichText(
@@ -113,7 +114,8 @@ class _ItemViewState extends State<ItemView> {
             ),
           );
         },
-        tooltip: FlutterI18n.translate(context, 'vault.app_bar.tooltip.edit_item'),
+        tooltip:
+            FlutterI18n.translate(context, 'vault.app_bar.tooltip.edit_item'),
         child: const Icon(Icons.edit),
       ),
     );

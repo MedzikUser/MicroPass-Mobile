@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:micropass/utils/custom_colors.dart';
+import 'package:micropass/utils/custom_styles.dart';
 import 'package:micropass/utils/storage.dart';
 import 'package:micropass_api/micropass_api.dart';
 
@@ -87,7 +87,7 @@ class _EditItemViewState extends State<EditItemView> {
             children: [
               I18nText(
                 'vault.section.item_informations',
-                child: Text('', style: CustomColors.sectionTextStyle(context)),
+                child: Text('', style: CustomStyles.sectionTextStyle(context)),
               ),
               const SizedBox(height: 5),
               TextFormField(
