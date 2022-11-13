@@ -44,9 +44,9 @@ flutter:
     - assets/i18n/
 
 flutter_icons:
-  image_path: "assets/icon/icon-bg.png"
-  adaptive_icon_foreground: "assets/icon/icon.png"
-  adaptive_icon_background: "#FFFFFF"
+  image_path: "assets/icon/logo.png"
+  adaptive_icon_foreground: "assets/icon/logo-transparent.png"
+  adaptive_icon_background: "#ff7d00"
   android: true
   ios: true
   remove_alpha_ios: true
