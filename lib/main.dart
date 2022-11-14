@@ -1,5 +1,6 @@
 import 'package:dynamic_themes/dynamic_themes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:micropass/theme.dart';
@@ -23,8 +24,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return DynamicTheme(
       themeCollection: themeCollection,
-      // TODO detect system theme
-      defaultThemeId: AppThemes.dark,
+      defaultThemeId:
+          SchedulerBinding.instance.window.platformBrightness == Brightness.dark
+              ? AppThemes.dark
+              : AppThemes.light,
       builder: (context, theme) {
         return MaterialApp(
           title: 'MicroPass',
