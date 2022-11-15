@@ -75,30 +75,6 @@ class _VaultViewState extends State<VaultView> {
       }
     }
 
-    // final ciphersJsonText = await Storage.read(StorageKey.cachedCiphers);
-    // if (ciphersJsonText != null) {
-    //   final ciphersJson = jsonDecode(ciphersJsonText);
-
-    //   for (var cipher in ciphersJson["ciphers"]) {
-    //     ciphers.add(Cipher.fromMap(cipher));
-    //   }
-
-    //   if (ciphers.isEmpty) {
-    //     setState(() {
-    //       loading = false;
-    //     });
-    //   }
-    // }
-
-    // final ciphersList = await client.list(lastSync);
-    // for (var cipherId in ciphersList) {
-    //   final cipher = await client.take(cipherId);
-
-    //   ciphers.add(cipher);
-    // }
-
-    // await Storage.write(StorageKey.cachedCipherIds, jsonEncode(ciphersList));
-
     var cipherIds = [];
 
     widgets = [];
