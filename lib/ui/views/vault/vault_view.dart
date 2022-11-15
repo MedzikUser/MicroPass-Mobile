@@ -21,7 +21,6 @@ class _VaultViewState extends State<VaultView> {
 
   var loading = true;
 
-  late List<Cipher> ciphers = [];
   late List<Widget> widgets = [];
 
   @override
@@ -31,17 +30,50 @@ class _VaultViewState extends State<VaultView> {
   }
 
   Future<void> _init() async {
-    // TODO: Implement ciphers cache.
+    final lastSyncString =
+        await Storage.read(StorageKey.ciphersLastSync) ?? '0';
+    final lastSync = int.parse(lastSyncString);
 
-    //final lastSync = await Storage.read(StorageKey.ciphersLastSync);
     final unixNow =
         (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
 
-    await Storage.write(StorageKey.ciphersLastSync, unixNow);
+    final Map<String, Cipher> ciphers = {};
 
-    const lastSync = null;
+    final accessToken = await Storage.read(StorageKey.accessToken);
+    final encryptionKey = await Storage.read(StorageKey.encryptionKey);
 
-    ciphers = [];
+    client = CiphersApi(accessToken!, encryptionKey!);
+
+    try {
+      final ciphersList = await client.list(lastSync);
+      for (final cipherId in ciphersList) {
+        final cipher = await client.take(cipherId);
+
+        ciphers.addAll({'$cipherId': cipher});
+
+        await Storage.write(
+            StorageKey.cipherCache(cipherId), jsonEncode(cipher));
+      }
+    } catch (err) {
+      print(err);
+    }
+
+    final cachedCipherIds = await Storage.read(StorageKey.cachedCipherIds);
+    if (cachedCipherIds != null) {
+      final cachedCipherIdsList = jsonDecode(cachedCipherIds);
+
+      for (final cipherId in cachedCipherIdsList) {
+        final cipherJson = await Storage.read(StorageKey.cipherCache(cipherId));
+
+        final cipherJsonString = jsonDecode(cipherJson!);
+        final cipherJsonMap = jsonDecode(cipherJsonString);
+
+        ciphers.putIfAbsent(
+          '$cipherId',
+          () => Cipher.fromMap(cipherJsonMap),
+        );
+      }
+    }
 
     // final ciphersJsonText = await Storage.read(StorageKey.cachedCiphers);
     // if (ciphersJsonText != null) {
@@ -58,24 +90,26 @@ class _VaultViewState extends State<VaultView> {
     //   }
     // }
 
-    final accessToken = await Storage.read(StorageKey.accessToken);
-    final encryptionKey = await Storage.read(StorageKey.encryptionKey);
+    // final ciphersList = await client.list(lastSync);
+    // for (var cipherId in ciphersList) {
+    //   final cipher = await client.take(cipherId);
 
-    client = CiphersApi(accessToken!, encryptionKey!);
-
-    final ciphersList = await client.list(lastSync);
-    for (var cipherId in ciphersList) {
-      final cipher = await client.take(cipherId);
-
-      ciphers.add(cipher);
-    }
+    //   ciphers.add(cipher);
+    // }
 
     // await Storage.write(StorageKey.cachedCipherIds, jsonEncode(ciphersList));
 
+    var cipherIds = [];
+
     widgets = [];
-    for (var cipher in ciphers) {
-      widgets.add(ItemWidget(cipher: cipher));
+    for (var cipher in ciphers.entries) {
+      widgets.add(ItemWidget(cipher: cipher.value));
+      cipherIds.add(cipher.key);
     }
+
+    await Storage.write(StorageKey.cachedCipherIds, jsonEncode(cipherIds));
+
+    await Storage.write(StorageKey.ciphersLastSync, unixNow);
 
     setState(() {
       loading = false;
