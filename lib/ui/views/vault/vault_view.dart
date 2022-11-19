@@ -46,13 +46,15 @@ class _VaultViewState extends State<VaultView> {
 
     try {
       final ciphersList = await client.list(lastSync);
-      for (final cipherId in ciphersList) {
-        final cipher = await client.take(cipherId);
+      if (ciphersList.updated != null) {
+        for (final cipherId in ciphersList.updated!) {
+          final cipher = await client.take(cipherId);
 
-        ciphers.addAll({'$cipherId': cipher});
+          ciphers.addAll({cipherId: cipher});
 
-        await Storage.write(
-            StorageKey.cipherCache(cipherId), jsonEncode(cipher));
+          await Storage.write(
+              StorageKey.cipherCache(cipherId), jsonEncode(cipher));
+        }
       }
     } catch (err) {
       print(err);
