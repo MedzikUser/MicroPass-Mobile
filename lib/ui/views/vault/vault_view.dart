@@ -21,7 +21,7 @@ class VaultView extends StatefulWidget {
 class _VaultViewState extends State<VaultView> {
   var loading = true;
 
-  late List<Widget> widgets = [];
+  List<Widget> widgets = [];
 
   @override
   void initState() {
@@ -124,17 +124,23 @@ class _VaultViewState extends State<VaultView> {
       }
     }
 
+    // the list will contain all the cipher IDs that are in the ciphers map
     var cipherIds = [];
 
+    // clear the widgets list
     widgets = [];
 
+    // iterate over the ciphers map
     for (var cipher in ciphers.entries) {
+      // add the cipher to the widgets list
       widgets.add(ItemWidget(cipher: cipher.value));
+      // add the cipher ID to the cipher IDs list
       cipherIds.add(cipher.key);
     }
 
+    // write the cipher IDs to the cache
     await Storage.write(StorageKey.cachedCipherIds, jsonEncode(cipherIds));
-
+    // write the last sync unix time to the cache
     await Storage.write(StorageKey.ciphersLastSync, unixNow);
 
     setState(() {
@@ -143,8 +149,10 @@ class _VaultViewState extends State<VaultView> {
   }
 
   Future<void> lock() async {
+    // drop all secrets from memory
     await Storage.dropMemory();
 
+    // navigate to locked view
     if (!mounted) return;
     Navigator.pushReplacement(
       context,

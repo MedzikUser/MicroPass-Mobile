@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:micropass/ui/views/vault/edit_item_view.dart';
 import 'package:micropass/utils/custom_styles.dart';
+import 'package:micropass/utils/storage.dart';
 import 'package:micropass/utils/toast.dart';
 import 'package:micropass_api/micropass_api.dart';
 
@@ -30,11 +31,31 @@ class _ItemViewState extends State<ItemView> {
     return DateTime.fromMillisecondsSinceEpoch(unix * 1000).toString();
   }
 
+  Future<void> delete() async {
+    final accessToken = await Storage.read(StorageKey.accessToken);
+    final client = CiphersApi(accessToken!, '');
+
+    await client.delete(widget.cipher.id!);
+
+    if (mounted) Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.cipher.name),
+        actions: [
+          IconButton(
+            onPressed: delete,
+            icon: const Icon(Icons.delete_outline),
+            tooltip:
+                FlutterI18n.translate(context, 'vault.options_modal.delete'),
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
