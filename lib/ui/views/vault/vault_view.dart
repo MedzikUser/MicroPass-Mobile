@@ -7,6 +7,8 @@ import 'package:micropass/ui/views/vault/add_item_view.dart';
 import 'package:micropass/ui/views/vault/unlock_view.dart';
 import 'package:micropass/ui/widgets/vault/item_widget.dart';
 import 'package:micropass/utils/storage.dart';
+import 'package:micropass/utils/toast.dart';
+import 'package:micropass/utils/utils.dart';
 import 'package:micropass_api/micropass_api.dart';
 
 class VaultView extends StatefulWidget {
@@ -17,8 +19,6 @@ class VaultView extends StatefulWidget {
 }
 
 class _VaultViewState extends State<VaultView> {
-  late CiphersApi client;
-
   var loading = true;
 
   late List<Widget> widgets = [];
@@ -30,56 +30,104 @@ class _VaultViewState extends State<VaultView> {
   }
 
   Future<void> _init() async {
+    // get unix time of the last vault sync
     final lastSyncString =
         await Storage.read(StorageKey.ciphersLastSync) ?? '0';
     final lastSync = int.parse(lastSyncString);
 
+    // current unix time
     final unixNow =
         (DateTime.now().millisecondsSinceEpoch / 1000).floor().toString();
 
-    final Map<String, Cipher> ciphers = {};
-
+    // read the user access token
     final accessToken = await Storage.read(StorageKey.accessToken);
+    // read the encryption key
     final encryptionKey = await Storage.read(StorageKey.encryptionKey);
 
-    client = CiphersApi(accessToken!, encryptionKey!);
+    // create the api client
+    final client = CiphersApi(accessToken!, encryptionKey!);
+
+    // ciphers map, to which all ciphers will be added
+    final Map<String, Cipher> ciphers = {};
 
     try {
+      // get the ciphers list from the api
       final ciphersList = await client.list(lastSync);
+
       if (ciphersList.updated != null) {
         for (final cipherId in ciphersList.updated!) {
+          // get the cipher info from the api
           final cipher = await client.take(cipherId);
 
+          // add the cipher to the ciphers map
           ciphers.addAll({cipherId: cipher});
 
+          final cipherJson = cipher.toJsonFull();
+
+          // write the cipher to the cache
           await Storage.write(
-              StorageKey.cipherCache(cipherId), jsonEncode(cipher));
+            StorageKey.cipherCache(cipherId),
+            cipherJson,
+          );
         }
       }
-    } catch (err) {
-      print(err);
+
+      if (ciphersList.deleted != null) {
+        // read the cached cipher IDs
+        final cachedCipherIds = await Storage.read(StorageKey.cachedCipherIds);
+
+        // parse the cached cipher IDs
+        final cipherIds = jsonDecode(cachedCipherIds!);
+
+        for (final cipherId in ciphersList.deleted!) {
+          // remove the cipher from map
+          cipherIds.remove(cipherId);
+
+          // delete the cipher from cache
+          Storage.delete(StorageKey.cipherCache(cipherId));
+        }
+
+        // encode the cipher IDs
+        final newCipherIds = jsonEncode(cipherIds);
+
+        // write the new cipher IDs
+        await Storage.write(StorageKey.cachedCipherIds, newCipherIds);
+      }
+    } catch (err, stacktrace) {
+      debugCatch(err, stacktrace);
+      if (mounted) Toast.show(context, content: err.toString());
     }
 
-    final cachedCipherIds = await Storage.read(StorageKey.cachedCipherIds);
-    if (cachedCipherIds != null) {
-      final cachedCipherIdsList = jsonDecode(cachedCipherIds);
+    // if it is a partial vault sync
+    if (lastSync != 0) {
+      // read the cached ciphers IDs
+      final cachedCipherIds = await Storage.read(StorageKey.cachedCipherIds);
 
-      for (final cipherId in cachedCipherIdsList) {
-        final cipherJson = await Storage.read(StorageKey.cipherCache(cipherId));
+      if (cachedCipherIds != null) {
+        // parse the cached ciphers IDs
+        final cachedCipherIdsList = jsonDecode(cachedCipherIds);
 
-        final cipherJsonString = jsonDecode(cipherJson!);
-        final cipherJsonMap = jsonDecode(cipherJsonString);
+        for (final cipherId in cachedCipherIdsList) {
+          // read the cipher from the cache
+          final cipherJson =
+              await Storage.read(StorageKey.cipherCache(cipherId));
 
-        ciphers.putIfAbsent(
-          '$cipherId',
-          () => Cipher.fromMap(cipherJsonMap),
-        );
+          // parse the cipher data
+          final cipherJsonMap = jsonDecode(cipherJson!);
+
+          // if absent, place cipher in ciphers map
+          ciphers.putIfAbsent(
+            '$cipherId',
+            () => Cipher.fromMap(cipherJsonMap),
+          );
+        }
       }
     }
 
     var cipherIds = [];
 
     widgets = [];
+
     for (var cipher in ciphers.entries) {
       widgets.add(ItemWidget(cipher: cipher.value));
       cipherIds.add(cipher.key);

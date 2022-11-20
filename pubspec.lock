@@ -306,7 +306,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: db808049714a7b405b5c6ec63000e2dc3b697e8c
+      resolved-ref: "42b453c28c7d85def6a5c770cf2fd645ba252064"
       url: "https://github.com/MedzikUser/dart-micropass-api.git"
     source: git
     version: "0.0.0"

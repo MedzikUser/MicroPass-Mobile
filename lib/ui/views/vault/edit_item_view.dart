@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:micropass/utils/custom_styles.dart';
 import 'package:micropass/utils/storage.dart';
+import 'package:micropass/utils/toast.dart';
+import 'package:micropass/utils/utils.dart';
 import 'package:micropass_api/micropass_api.dart';
 
 class EditItemView extends StatefulWidget {
@@ -57,15 +59,20 @@ class _EditItemViewState extends State<EditItemView> {
       final username = usernameController.text;
       final password = passwordController.text;
 
-      await client.update(
-        widget.cipher.id!,
-        Cipher(
-          type: CipherType.login,
-          name: name,
-          username: username,
-          password: password,
-        ),
-      );
+      try {
+        await client.update(
+          widget.cipher.id!,
+          Cipher(
+            type: CipherType.login,
+            name: name,
+            username: username,
+            password: password,
+          ),
+        );
+      } catch (err, stacktrace) {
+        debugCatch(err, stacktrace);
+        if (mounted) return Toast.show(context, content: err.toString());
+      }
 
       if (!mounted) return;
 
