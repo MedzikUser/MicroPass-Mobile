@@ -4,6 +4,7 @@ import 'package:micropass/ui/views/auth/login_view.dart';
 import 'package:micropass/ui/views/vault/vault_view.dart';
 import 'package:micropass/utils/storage.dart';
 import 'package:micropass/utils/toast.dart';
+import 'package:micropass/utils/utils.dart';
 import 'package:micropass_api/micropass_api.dart';
 
 class UnlockView extends StatefulWidget {
@@ -16,6 +17,7 @@ class UnlockView extends StatefulWidget {
 class _UnlockViewState extends State<UnlockView> {
   final _formKey = GlobalKey<FormState>();
 
+  // create a password controller
   final passwordController = TextEditingController();
 
   var loading = false;
@@ -34,18 +36,23 @@ class _UnlockViewState extends State<UnlockView> {
       });
 
       try {
+        // read email from storage
         final email = await Storage.read(StorageKey.email);
+        // read access token from storage
         final refreshToken = await Storage.read(StorageKey.refreshToken);
 
-        // refresh access token
+        // generate new access token
         final accessToken = await IdentityApi().refreshToken(refreshToken!);
+        // write access token to storage
         await Storage.write(StorageKey.accessToken, accessToken.accessToken!);
 
+        // get the encryption key
         final encryptionKey = await UserApi(accessToken.accessToken!)
             .encryptionKey(email!, passwordController.text);
-
+        // write the encryption key to storage
         await Storage.write(StorageKey.encryptionKey, encryptionKey);
 
+        // go to the vault view
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
@@ -55,7 +62,9 @@ class _UnlockViewState extends State<UnlockView> {
         );
 
         return;
-      } catch (err) {
+      } catch (err, stacktrace) {
+        debugCatch(err, stacktrace);
+
         if (mounted) {
           Toast.show(
             context,

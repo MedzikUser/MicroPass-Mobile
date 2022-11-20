@@ -30,7 +30,7 @@ class Storage {
   }
 
   /// Delete key from the storage.
-  static delete(StorageKey key) async {
+  static void delete(StorageKey key) async {
     // deleate the key from a suitable storage
     if (key.isInMemory) {
       // delete the value from a in-memory storage
