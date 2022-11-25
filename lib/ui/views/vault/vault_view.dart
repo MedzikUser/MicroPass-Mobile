@@ -62,7 +62,7 @@ class _VaultViewState extends State<VaultView> {
           // add the cipher to the ciphers map
           ciphers.addAll({cipherId: cipher});
 
-          final cipherJson = cipher.toJsonFull();
+          final cipherJson = cipher.toJson();
 
           // write the cipher to the cache
           await Storage.write(

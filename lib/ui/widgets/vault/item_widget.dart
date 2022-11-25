@@ -14,8 +14,8 @@ class ItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      title: Text(cipher.name),
-      subtitle: Text(cipher.username ?? ''),
+      title: Text(cipher.data.name),
+      subtitle: Text(cipher.data.typedFields!.username ?? ''),
       trailing: IconButton(
         onPressed: () => _dialogBuilder(context, cipher),
         icon: const Icon(Icons.more_horiz),
@@ -75,7 +75,7 @@ Future<void> _dialogBuilder(BuildContext context, Cipher cipher) async {
               leading: const Icon(Icons.delete),
               title: I18nText('vault.options_modal.delete'),
               onTap: () {
-                client.delete(cipher.id!);
+                client.delete(cipher.id);
                 Navigator.of(context).pop();
               },
             ),

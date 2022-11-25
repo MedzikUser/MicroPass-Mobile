@@ -26,9 +26,9 @@ class _EditItemViewState extends State<EditItemView> {
 
   @override
   void initState() {
-    nameController.text = widget.cipher.name;
-    usernameController.text = widget.cipher.username ?? '';
-    passwordController.text = widget.cipher.password ?? '';
+    nameController.text = widget.cipher.data.name;
+    usernameController.text = widget.cipher.data.typedFields!.username ?? '';
+    passwordController.text = widget.cipher.data.typedFields!.password ?? '';
 
     () async {
       final accessToken = await Storage.read(StorageKey.accessToken);
@@ -63,10 +63,14 @@ class _EditItemViewState extends State<EditItemView> {
         await client.update(
           widget.cipher.id!,
           Cipher(
-            type: CipherType.login,
-            name: name,
-            username: username,
-            password: password,
+            data: CipherData(
+              type: CipherType.login,
+              name: name,
+              typedFields: TypedFields(
+                username: username,
+                password: password,
+              ),
+            ),
           ),
         );
       } catch (err, stacktrace) {

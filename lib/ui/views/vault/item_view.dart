@@ -35,7 +35,7 @@ class _ItemViewState extends State<ItemView> {
     final accessToken = await Storage.read(StorageKey.accessToken);
     final client = CiphersApi(accessToken!, '');
 
-    await client.delete(widget.cipher.id!);
+    await client.delete(widget.cipher.id);
 
     if (mounted) Navigator.pop(context);
   }
@@ -44,7 +44,7 @@ class _ItemViewState extends State<ItemView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.cipher.name),
+        title: Text(widget.cipher.data.name),
         actions: [
           IconButton(
             onPressed: delete,
@@ -67,16 +67,16 @@ class _ItemViewState extends State<ItemView> {
             ),
             ItemWidget(
               title: FlutterI18n.translate(context, 'vault.item.name'),
-              subtitle: widget.cipher.name,
+              subtitle: widget.cipher.data.name,
               copy: false,
             ),
             ItemWidget(
               title: FlutterI18n.translate(context, 'vault.item.username'),
-              subtitle: widget.cipher.username,
+              subtitle: widget.cipher.data.typedFields!.username,
             ),
             ItemWidget(
               title: FlutterI18n.translate(context, 'vault.item.password'),
-              subtitle: widget.cipher.password,
+              subtitle: widget.cipher.data.typedFields!.password,
               secret: true,
             ),
             const SizedBox(height: 10),
@@ -105,7 +105,7 @@ class _ItemViewState extends State<ItemView> {
                     text: 'Created: ',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  TextSpan(text: parseTime(widget.cipher.created!))
+                  TextSpan(text: parseTime(widget.cipher.created))
                 ],
               ),
             ),
@@ -117,7 +117,7 @@ class _ItemViewState extends State<ItemView> {
                     text: 'Updated: ',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  TextSpan(text: parseTime(widget.cipher.updated!))
+                  TextSpan(text: parseTime(widget.cipher.updated))
                 ],
               ),
             ),

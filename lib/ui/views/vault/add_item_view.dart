@@ -54,10 +54,14 @@ class _AddItemViewState extends State<AddItemView> {
 
       await client.insert(
         Cipher(
-          type: CipherType.login,
-          name: name,
-          username: username,
-          password: password,
+          data: CipherData(
+            type: CipherType.login,
+            name: name,
+            typedFields: TypedFields(
+              username: username,
+              password: password,
+            ),
+          ),
         ),
       );
 
