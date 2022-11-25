@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:micropass/theme.dart';
 import 'package:micropass/ui/views/home/home_view.dart';
 import 'package:micropass/utils/storage.dart';
 
 Future<void> main() async {
+  await Hive.initFlutter();
+
   WidgetsFlutterBinding.ensureInitialized();
 
   final refreshToken = await Storage.read(StorageKey.refreshToken);

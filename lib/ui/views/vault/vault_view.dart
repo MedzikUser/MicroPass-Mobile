@@ -6,6 +6,7 @@ import 'package:micropass/ui/views/auth/login_view.dart';
 import 'package:micropass/ui/views/vault/add_item_view.dart';
 import 'package:micropass/ui/views/vault/unlock_view.dart';
 import 'package:micropass/ui/widgets/vault/item_widget.dart';
+import 'package:micropass/utils/db.dart';
 import 'package:micropass/utils/storage.dart';
 import 'package:micropass/utils/toast.dart';
 import 'package:micropass/utils/utils.dart';
@@ -31,8 +32,7 @@ class _VaultViewState extends State<VaultView> {
 
   Future<void> _init() async {
     // get unix time of the last vault sync
-    final lastSyncString =
-        await Storage.read(StorageKey.ciphersLastSync) ?? '0';
+    final lastSyncString = await Storage.read(StorageKey.lastSync) ?? '0';
     final lastSync = int.parse(lastSyncString);
 
     // current unix time
@@ -62,36 +62,15 @@ class _VaultViewState extends State<VaultView> {
           // add the cipher to the ciphers map
           ciphers.addAll({cipherId: cipher});
 
-          final cipherJson = cipher.toJson();
-
-          // write the cipher to the cache
-          await Storage.write(
-            StorageKey.cipherCache(cipherId),
-            cipherJson,
-          );
+          CipherDB.insert(cipher);
         }
       }
 
       if (ciphersList.deleted != null) {
-        // read the cached cipher IDs
-        final cachedCipherIds = await Storage.read(StorageKey.cachedCipherIds);
-
-        // parse the cached cipher IDs
-        final cipherIds = jsonDecode(cachedCipherIds!);
-
         for (final cipherId in ciphersList.deleted!) {
-          // remove the cipher from map
-          cipherIds.remove(cipherId);
-
-          // delete the cipher from cache
-          Storage.delete(StorageKey.cipherCache(cipherId));
+          // delete the cipher from app database
+          CipherDB.delete(cipherId);
         }
-
-        // encode the cipher IDs
-        final newCipherIds = jsonEncode(cipherIds);
-
-        // write the new cipher IDs
-        await Storage.write(StorageKey.cachedCipherIds, newCipherIds);
       }
     } catch (err, stacktrace) {
       debugCatch(err, stacktrace);
@@ -101,26 +80,17 @@ class _VaultViewState extends State<VaultView> {
     // if it is a partial vault sync
     if (lastSync != 0) {
       // read the cached ciphers IDs
-      final cachedCipherIds = await Storage.read(StorageKey.cachedCipherIds);
+      final cachedCipherIds = (await CipherDB.toMap()).keys;
 
-      if (cachedCipherIds != null) {
-        // parse the cached ciphers IDs
-        final cachedCipherIdsList = jsonDecode(cachedCipherIds);
+      for (final cipherId in cachedCipherIds) {
+        // read the cipher from the cache
+        final cipher = await CipherDB.get(cipherId);
 
-        for (final cipherId in cachedCipherIdsList) {
-          // read the cipher from the cache
-          final cipherJson =
-              await Storage.read(StorageKey.cipherCache(cipherId));
-
-          // parse the cipher data
-          final cipherJsonMap = jsonDecode(cipherJson!);
-
-          // if absent, place cipher in ciphers map
-          ciphers.putIfAbsent(
-            '$cipherId',
-            () => Cipher.fromMap(cipherJsonMap),
-          );
-        }
+        // if absent, place cipher in ciphers map
+        ciphers.putIfAbsent(
+          '$cipherId',
+          () => cipher,
+        );
       }
     }
 
@@ -138,10 +108,8 @@ class _VaultViewState extends State<VaultView> {
       cipherIds.add(cipher.key);
     }
 
-    // write the cipher IDs to the cache
-    await Storage.write(StorageKey.cachedCipherIds, jsonEncode(cipherIds));
     // write the last sync unix time to the cache
-    await Storage.write(StorageKey.ciphersLastSync, unixNow);
+    await Storage.write(StorageKey.lastSync, unixNow);
 
     setState(() {
       loading = false;

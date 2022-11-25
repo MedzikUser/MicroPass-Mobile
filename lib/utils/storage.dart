@@ -79,12 +79,5 @@ class StorageKey {
   /// * The key is stored in memory and deleted when the application is closed.
   static const encryptionKey = StorageKey('encryptionKey', _memory);
 
-  static StorageKey cipherCache(String cipherId) {
-    return StorageKey('cipherCache_$cipherId', _storage);
-  }
-
-  static const cachedCipherIds = StorageKey('cachedCipherIds', _storage);
-
-  // static const cachedCiphers = StorageKey('ciphers', _storage);
-  static const ciphersLastSync = StorageKey('ciphersLastSync', _storage);
+  static const lastSync = StorageKey('lasySync', _storage);
 }

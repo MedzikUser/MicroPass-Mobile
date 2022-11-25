@@ -76,6 +76,8 @@ class _UnlockViewState extends State<UnlockView> {
         }
       }
 
+      if (!mounted) return;
+
       setState(() {
         loading = false;
       });

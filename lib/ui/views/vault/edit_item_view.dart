@@ -61,7 +61,7 @@ class _EditItemViewState extends State<EditItemView> {
 
       try {
         await client.update(
-          widget.cipher.id!,
+          widget.cipher.id,
           Cipher(
             data: CipherData(
               type: CipherType.login,

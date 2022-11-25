@@ -28,6 +28,8 @@ dependencies:
   # Storage
   flutter_secure_storage: ^6.0.0
   memory_cache: ^1.1.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:
